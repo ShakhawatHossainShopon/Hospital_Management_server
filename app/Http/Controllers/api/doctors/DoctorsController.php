@@ -18,7 +18,20 @@ class DoctorsController extends Controller
         'doctors'=>$user->doctors
         ], 200);
     }
-
+    public function singleDoctor(Request $request,$id){
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+        $doctor = Doctor::find($id);
+        if (!$doctor) {
+            return response()->json(['message' => 'Doctor not Found'], 404);
+        }
+        return response()->json(['message' => 'doctor retrieve sucessfully',
+        'status'=>true,
+        'doctor'=>$doctor
+        ], 200);
+    }
       public function store(Request $request)
     {
         $user = $request->user();

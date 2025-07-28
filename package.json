@@ -9,7 +9,7 @@
         "make:controller": "php artisan make:controller",
         "make:model": "php artisan make:model",
         "db:fresh": "php artisan migrate:fresh",
-        "db:migrate": "php artisan migrate",
+        "db:push": "php artisan migrate",
         "make:migration": "php artisan make:migration"
     },
     "devDependencies": {
