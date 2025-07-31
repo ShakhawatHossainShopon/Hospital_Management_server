@@ -7,13 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class Doctor extends Model
+class Scedule extends Model
 {
     use HasFactory, Notifiable, HasApiTokens;
     protected $guarded = [];
 
-    public function scedules()
+    public function slots()
     {
-        return $this->hasMany(Scedule::class, 'doctor_id');
+        return $this->hasMany(Slot::class, 'scedule_id');
     }
+   
 }
