@@ -60,5 +60,7 @@ Route::prefix('scedule')->group(function () {
 Route::prefix('appoinment')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/create', [AppoinmentController::class, 'store']);
+        Route::post('/save', [AppoinmentController::class, 'storeWithUser']);
     });
+    
 });
