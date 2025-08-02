@@ -24,9 +24,9 @@ class AppoinmentController extends Controller
     if (!$patient) {
     return response()->json(['message' => 'Patient not found'], 404);
     }
-        $patient_name = $patient->firstname . $patient->lastname;
+        $patient_name = $patient->firstname . ' ' . $patient->lastname;
         $patient_phone = $patient->mobile_phone;
-        $patient_type = 'new';
+        $patient_type = 'Old';
         $patient_age = $patient->age;
 
         $appoinment = Appointment::create([

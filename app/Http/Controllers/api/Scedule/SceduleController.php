@@ -69,7 +69,7 @@ class SceduleController extends Controller
     return response()->json([
         'message' => 'Schedules retrieved successfully',
         'status' => true,
-        'schedules' => $schedules
+        'schedules' => $schedules,
     ], 200);
 }
  public function store(Request $request)
@@ -117,7 +117,10 @@ public function getSlotsByDay(Request $request)
 {
     $doctorId = $request->doctor_id;
     $day = $request->day; // 0=Sunday, 6=Saturday
-
+    $doctor = $request->user()->doctors()
+    ->select('firstname', 'lastname', 'title', 'degree_name', 'speciality', 'bmdc_code')
+    ->where('id', $doctorId)
+    ->first();
     $schedule = Scedule::with('slots')
         ->where('doctor_id', $doctorId)
         ->where('day', $day)
@@ -132,7 +135,8 @@ public function getSlotsByDay(Request $request)
 
     return response()->json([
         'status' => true,
-        'slots' => $schedule->slots
+        'slots' => $schedule->slots,
+        'doctor'=>$doctor
     ]);
 }
 public function destroySlot(Request $request){

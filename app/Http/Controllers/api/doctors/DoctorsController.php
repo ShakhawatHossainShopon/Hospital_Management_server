@@ -185,6 +185,7 @@ public function destroy($id){
         'message' => 'doctor retrieve sucessfully',
         'status'=>true,
         'doctors' => $doctors,
+        'doctorId'=>$user->id
         ], 200);
     }
 

@@ -4,8 +4,7 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite",
-        "start": "php artisan serve",
+        "dev": "php artisan serve",
         "make:controller": "php artisan make:controller",
         "make:model": "php artisan make:model",
         "db:fresh": "php artisan migrate:fresh",
