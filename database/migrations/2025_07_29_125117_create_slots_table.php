@@ -21,6 +21,7 @@ return new class extends Migration
         $table->string('phone')->nullable();
         $table->string('type')->nullable();
         $table->string('patient_age')->nullable();
+        $table->string('note')->nullable();
         $table->string('status')->default('pending');
         $table->foreignId('appointment_id')->nullable()->constrained('appointments')->onDelete('set null');
         $table->foreignId('patient_id')->nullable()->constrained('patients')->onDelete('set null');

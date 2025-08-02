@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api\appoinments;
 
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
+use App\Models\Patient;
 use App\Models\Slot;
 use Illuminate\Http\Request;
 
@@ -61,4 +62,63 @@ class AppoinmentController extends Controller
     'slot'=>$slot
     ]);
     } 
+
+    public function storeWithUser(Request $request){
+        $user = $request->user();
+        if(!$user){
+        return response()->json([
+        'message' => 'Unothorized',
+        ],401);
+        }
+        $user_id = $user->id;
+        $patient_phone = $request->mobile_phone;
+        $firstname = $request->firstname;
+        $lastname = $request->lastname;
+        $gender = $request->gender;
+        $age = $request->age;
+        $note = $request->note;
+        $doctor_id = $request->doctor_id;
+        $user_id = $user->id;
+        $slot_id = $request->slot_id;
+        $patient_type = "new";
+        $patient = Patient::create([
+            'firstname'=>$firstname,
+            'lastname'=>$lastname,
+            'mobile_phone'=>$patient_phone,
+            'gender'=>$gender,
+            'age'=>$age,
+            'user_id'=>$user_id
+        ]);
+         
+        $appoinment = Appointment::create([
+            'patient_id' => $patient->id,
+            'doctor_id' => $doctor_id,
+            'user_id' => $user_id,
+        ]);
+
+        $slot = Slot::find($slot_id);
+        if(!$slot){
+        return response()->json([
+        'message' => 'Slot Not found',
+        ],404);
+        }
+        if ($slot) {
+        $slot->update([
+        'patient_id' => $patient->id,
+        'is_booked'=> true,
+        'name'=> $patient->firstname . " " . $patient->lastname,
+        'phone'=> $patient->mobile_phone,
+        'user_id' => $user_id,
+        'type' => $patient_type,
+        'patient_age'=>$patient->age,
+        'appointment_id'=>$appoinment->id,
+        'note' => $note
+        ]);
+        return response()->json([
+    'message' => 'Appointment created and slot updated successfully',
+    'appointment' => $appoinment,
+    'slot'=>$slot
+    ]);
+        }
+    }
 }
