@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('patients', function (Blueprint $table) {
@@ -18,6 +15,7 @@ return new class extends Migration
             $table->string('guardian_name');
             $table->string('mobile_phone');
             $table->string('gender');
+            $table->string('type')->default('old');
             $table->tinyInteger('age');
             $table->date('birth_date');
             $table->string('height');
@@ -27,7 +25,7 @@ return new class extends Migration
             $table->string('city');
             $table->string('area');
             $table->string('postal_code');
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

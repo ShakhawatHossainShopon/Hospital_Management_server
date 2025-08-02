@@ -44,12 +44,12 @@ class PatientController extends Controller
             'lastname' => 'required|string|max:255',
             'guardian_name' => 'string|max:255',
             'mobile_phone' => 'required|string|max:20',
-            'gender' => 'required|string|max:10',
+            'gender' => 'required|string',
             'age' => 'required|integer|min:0|max:120',
             'birth_date' => 'date',
             'height' => 'string',
             'weight' => 'string',
-            'blood_groupe' => 'required|string|max:5',
+            'blood_groupe' => 'string|max:5',
             'address_line' => 'string',
             'city' => 'string',
             'area' => 'string',
@@ -142,5 +142,17 @@ public function destroy(Request $request, $id)
     return response()->json(['message' => 'Patient deleted successfully'], 200);
 }
 
+public function getUserByPhone(Request $request, $phone)
+{
+    $user = $request->user();
+    if (!$user) {
+        return response()->json(['message' => 'Unauthorized'], 401);
+    }
 
+    $patient = Patient::where('mobile_phone', $phone)->first();
+    if (!$patient) {
+        return response()->json(['message' => 'Patient not found'], 404);
+    }
+    return response()->json($patient);
+}
 }

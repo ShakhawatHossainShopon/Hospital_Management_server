@@ -170,4 +170,23 @@ public function destroy($id){
     ], 200);
     }
 
+    public function DoctorsName(Request $request){
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+         $doctors = $user->doctors->map(function ($doctor) {
+        return [
+            'id' => $doctor->id,
+            'name' => $doctor->firstname . ' ' . $doctor->lastname,
+        ];
+        });
+        return response()->json([
+        'message' => 'doctor retrieve sucessfully',
+        'status'=>true,
+        'doctors' => $doctors,
+        'doctorId'=>$user->id
+        ], 200);
+    }
+
 }

@@ -32,7 +32,7 @@ return new class extends Migration
             $table->string('password');
             $table->date('starting_pratice');
             $table->string('achievement');
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
