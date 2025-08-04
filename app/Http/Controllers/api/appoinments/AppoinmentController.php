@@ -10,6 +10,36 @@ use Illuminate\Http\Request;
 
 class AppoinmentController extends Controller
 {
+    public function index(Request $request){
+        $user = $request->user();
+        if(!$user){
+        return response()->json([
+        'message' => 'Unothorized',
+        ],401);
+        }
+
+        $appoinments = Appointment::all();
+        return response()->json([
+        'message' => 'Appointment Retrive successfully',
+        'appointment' => $appoinments,
+    ]);
+    }
+    public function AppoinmentsByDoctorId(Request $request){
+        $user = $request->user();
+        if(!$user){
+        return response()->json([
+        'message' => 'Unothorized',
+        ],401);
+        }
+
+        $appointments = Appointment::with('patient','slot')
+        ->where('doctor_id', $request->id)
+        ->get();
+        return response()->json([
+        'message' => 'Appointment retrieved successfully',
+        'appointment'=>$appointments
+    ]);
+    }
     public function store(Request $request){
         $user = $request->user();
         if(!$user){
@@ -120,5 +150,27 @@ class AppoinmentController extends Controller
     'slot'=>$slot
     ]);
         }
+    }
+
+    public function payAppointment(Request $request){
+        $appointmentId = $request->appointmentId;
+        $amount = $request->amount;
+
+         $appointment = Appointment::find($appointmentId);
+         if(!$appointment){
+        return response()->json([
+        'message' => 'Slot Not found',
+        ],404);
+        }
+        $appointment->update([
+            'payment_status' => true,
+            'amount'=>$amount,
+            'due_status'=>false,
+            'due'=>null
+        ]);
+        return response()->json([
+        'message' => 'Appointment paid successfully',
+        'appointment' => $appointment,
+    ]);
     }
 }

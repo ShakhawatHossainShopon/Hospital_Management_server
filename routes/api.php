@@ -39,7 +39,7 @@ Route::prefix('patients')->group(function () {
         Route::get('/', [PatientController::class, 'index']);
         Route::get('/{id}', [PatientController::class, 'single']);
         Route::post('/', [PatientController::class, 'store']);
-        Route::put('/{id}', [PatientController::class, 'update']);
+        Route::patch('/{id}', [PatientController::class, 'update']);
         Route::delete('/{id}', [PatientController::class, 'destroy']);
         Route::get('/search/{phone}', [PatientController::class, 'getUserByPhone']);
     });
@@ -61,6 +61,8 @@ Route::prefix('appoinment')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/create', [AppoinmentController::class, 'store']);
         Route::post('/save', [AppoinmentController::class, 'storeWithUser']);
+        Route::patch('/payAppoinment', [AppoinmentController::class, 'payAppointment']);
+        Route::get('/', [AppoinmentController::class, 'index']);
+        Route::get('/doctor/{id}', [AppoinmentController::class, 'AppoinmentsByDoctorId']);
     });
-    
 });
