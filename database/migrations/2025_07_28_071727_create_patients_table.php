@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('guardian_name')->nullable();
             $table->string('mobile_phone');
             $table->string('gender');
-            $table->string('type')->default('old');
+            $table->string('type')->default('Old');
             $table->tinyInteger('age');
             $table->date('birth_date')->nullable();
             $table->string('height')->nullable();

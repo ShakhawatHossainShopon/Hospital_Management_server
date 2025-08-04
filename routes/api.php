@@ -54,6 +54,7 @@ Route::prefix('scedule')->group(function () {
     Route::get('/slots/doctorId/{doctor_id}/day/{day}', [SceduleController::class, 'getSlotsByDay']);
     Route::delete('{id}', [SceduleController::class, 'destroySlot']); 
      Route::delete('delete/{id}', [SceduleController::class, 'destroyScedule']);
+     Route::patch('slot/status', [SceduleController::class, 'updateStatus']); 
 });
 });
 
@@ -63,6 +64,7 @@ Route::prefix('appoinment')->group(function () {
         Route::post('/save', [AppoinmentController::class, 'storeWithUser']);
         Route::patch('/payAppoinment', [AppoinmentController::class, 'payAppointment']);
         Route::get('/', [AppoinmentController::class, 'index']);
+        Route::get('/{id}', [AppoinmentController::class, 'appoinmentById']);
         Route::get('/doctor/{id}', [AppoinmentController::class, 'AppoinmentsByDoctorId']);
     });
 });

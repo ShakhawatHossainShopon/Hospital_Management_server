@@ -22,4 +22,9 @@ public function slot()
     return $this->hasMany(Slot::class);
 }
 
+public function doctor()
+{
+    return $this->belongsTo(Doctor::class);
+}
+
 }
