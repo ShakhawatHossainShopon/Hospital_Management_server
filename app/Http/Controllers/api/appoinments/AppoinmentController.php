@@ -24,6 +24,21 @@ class AppoinmentController extends Controller
         'appointment' => $appoinments,
     ]);
     }
+
+    public function appoinmentById(Request $request){
+        $user = $request->user();
+        if(!$user){
+        return response()->json([
+        'message' => 'Unothorized',
+        ],401);
+        }
+
+        $appoinments = Appointment::with('doctor','patient')->where('id', $request->id)->first();
+        return response()->json([
+        'message' => 'Appointment Retrive successfully',
+        'appointment' => $appoinments,
+    ]);
+    }
     public function AppoinmentsByDoctorId(Request $request){
         $user = $request->user();
         if(!$user){
@@ -110,7 +125,7 @@ class AppoinmentController extends Controller
         $doctor_id = $request->doctor_id;
         $user_id = $user->id;
         $slot_id = $request->slot_id;
-        $patient_type = "new";
+        $patient_type = "New";
         $patient = Patient::create([
             'firstname'=>$firstname,
             'lastname'=>$lastname,
@@ -159,7 +174,7 @@ class AppoinmentController extends Controller
          $appointment = Appointment::find($appointmentId);
          if(!$appointment){
         return response()->json([
-        'message' => 'Slot Not found',
+        'message' => 'appoinemnt Not found',
         ],404);
         }
         $appointment->update([

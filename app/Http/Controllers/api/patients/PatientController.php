@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api\patients;
 
 use App\Http\Controllers\Controller;
 use App\Models\Patient;
+use App\Models\Slot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -88,40 +89,22 @@ class PatientController extends Controller
         return response()->json(['message' => 'Patient not found'], 404);
     }
 
-    $validator = Validator::make($request->all(), [
-        'firstname' => 'sometimes|required|string',
-        'lastname' => 'sometimes|required|string',
-        'guardian_name' => 'sometimes|required|string',
-        'mobile_phone' => 'sometimes|required|string',
-        'gender' => 'sometimes|required|string',
-        'age' => 'sometimes|required|integer',
-        'birth_date' => 'sometimes|required|date',
-        'height' => 'sometimes|required|string',
-        'weight' => 'sometimes|required|string',
-        'blood_groupe' => 'sometimes|required|string',
-        'address_line' => 'sometimes|required|string',
-        'city' => 'sometimes|required|string',
-        'area' => 'sometimes|required|string',
-        'postal_code' => 'sometimes|required|string',
-    ]);
-
-    if ($validator->fails()) {
-        return response()->json([
-            'status' => false,
-            'message' => 'Validation errors',
-            'errors' => $validator->errors()->all()
-        ], 422);
-    }
-
     $patient->update($request->only([
         'firstname', 'lastname', 'guardian_name', 'mobile_phone', 'gender', 'age', 'birth_date',
         'height', 'weight', 'blood_groupe', 'address_line', 'city', 'area', 'postal_code'
     ]));
-
+    $slot = Slot::where('patient_id', $patient->id)->first();
+    $slot->update([
+    'name' => $patient->firstname . " " .$patient->lastname  ,
+    'patient_age' => $patient->age,
+    'phone' => $patient->mobile_phone,
+    'type'=>'Old'
+    ]);
     return response()->json([
         'status' => true,
         'message' => 'Patient updated successfully',
-        'patient' => $patient
+        'patient' => $patient,
+        "slot"=>$slot
     ], 200);
 }
 

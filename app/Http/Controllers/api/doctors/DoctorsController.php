@@ -44,22 +44,14 @@ class DoctorsController extends Controller
             'title' => 'required|string',
             'firstname' => 'required|string',
             'lastname' => 'required|string',
-            'working_place' => 'string',
-            'available_days' => 'string',
             'bmdc_code' => 'required|string',
-            'job_designation' => 'required|string',
-            'booking_phone' => 'required|string',
             'gender' => 'required|string',
             'degree_name' => 'required|string',
             'consultancy_fee' => 'required|string',
             'mobile' => 'required|string',
-            'provide_service' => 'string',
             'about' => 'string',
             'email' => 'required|email|unique:doctors,email',
-            'speciality' => 'string',
             'password' => 'required|string',
-            'starting_pratice' => 'date',
-            'achievement' => 'string',
         ]);
 
         if ($validator->fails()) {
@@ -113,37 +105,6 @@ class DoctorsController extends Controller
     if (!$doctor) {
         return response()->json(['message' => 'Doctor not found'], 404);
     }
-
-    $validator = Validator::make($request->all(), [
-        'title' => 'sometimes|required|string',
-        'firstname' => 'sometimes|required|string',
-        'lastname' => 'sometimes|required|string',
-        'working_place' => 'nullable|string',
-        'available_days' => 'nullable|string',
-        'bmdc_code' => 'sometimes|required|string',
-        'job_designation' => 'string',
-        'booking_phone' => 'sometimes|required|string',
-        'gender' => 'sometimes|required|string',
-        'degree_name' => 'sometimes|required|string',
-        'consultancy_fee' => 'sometimes|required|string',
-        'mobile' => 'sometimes|required|string',
-        'provide_service' => 'nullable|string',
-        'about' => 'nullable|string',
-        'email' => 'sometimes|required|email|unique:doctors,email,' . $doctor->id,
-        'speciality' => 'nullable|string',
-        'password' => 'sometimes|required|string',
-        'starting_pratice' => 'nullable|date',
-        'achievement' => 'nullable|string',
-    ]);
-
-    if ($validator->fails()) {
-        return response()->json([
-            'status' => false,
-            'message' => 'Validation Errors',
-            'errors' => $validator->errors()->all()
-        ], 422);
-    }
-
     $doctor->update($request->all());
 
     return response()->json([

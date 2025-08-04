@@ -165,5 +165,26 @@ public function destroyScedule(Request $request){
     ]);
 }
 
+public function updateStatus(Request $request)
+{
+    $user = $request->user();
+    if (!$user) {
+        return response()->json(['message' => 'Unauthorized'], 401);
+    }
+
+    $slot = Slot::find($request->id);
+    if (!$slot) {
+        return response()->json(['message' => 'Slot not found'], 404);
+    }
+
+    $slot->status = $request->status;
+    $slot->save();
+
+    return response()->json([
+        'message' => 'Schedule status updated successfully',
+        'status' => $slot->status,
+    ]);
+}
+
 
 }
