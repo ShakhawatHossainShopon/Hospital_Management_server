@@ -11,4 +11,9 @@ class Slot extends Model
 {
     use HasFactory, Notifiable, HasApiTokens;
     protected $guarded = [];
+
+    public function appoinment()
+{
+    return $this->belongsTo(Appointment::class);
+}
 }

@@ -11,4 +11,15 @@ class Appointment extends Model
 {
     use HasFactory, Notifiable, HasApiTokens;
     protected $guarded = [];
+
+    public function patient()
+{
+    return $this->belongsTo(Patient::class);
+}
+
+public function slot()
+{
+    return $this->hasMany(Slot::class);
+}
+
 }

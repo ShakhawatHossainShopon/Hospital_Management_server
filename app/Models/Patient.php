@@ -11,4 +11,6 @@ class Patient extends Model
 {
     use HasFactory, Notifiable, HasApiTokens;
     protected $guarded = [];
+
+    
 }
