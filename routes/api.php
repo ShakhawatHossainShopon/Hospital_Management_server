@@ -3,8 +3,10 @@
 use App\Http\Controllers\api\appoinments\AppoinmentController;
 use App\Http\Controllers\api\auth\AuthController;
 use App\Http\Controllers\api\doctors\DoctorsController;
+use App\Http\Controllers\api\groupe\GroupeController;
 use App\Http\Controllers\api\patients\PatientController;
 use App\Http\Controllers\api\Scedule\SceduleController;
+use App\Http\Controllers\api\Test\TestController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
@@ -66,5 +68,20 @@ Route::prefix('appoinment')->group(function () {
         Route::get('/', [AppoinmentController::class, 'index']);
         Route::get('/{id}', [AppoinmentController::class, 'appoinmentById']);
         Route::get('/doctor/{id}', [AppoinmentController::class, 'AppoinmentsByDoctorId']);
+    });
+});
+
+Route::prefix('test')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/', [TestController::class, 'index']);
+        Route::post('/', [TestController::class, 'store']);
+        Route::delete('/{id}', [TestController::class, 'destroy']);
+    });
+});
+
+Route::prefix('groupe')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/', [GroupeController::class, 'store']);
+        Route::get('/', [GroupeController::class, 'index']);
     });
 });

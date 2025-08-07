@@ -18,7 +18,7 @@ class AppoinmentController extends Controller
         ],401);
         }
 
-        $appoinments = Appointment::all();
+        $appoinments = Appointment::with('patient','slot')->get();
         return response()->json([
         'message' => 'Appointment Retrive successfully',
         'appointment' => $appoinments,
