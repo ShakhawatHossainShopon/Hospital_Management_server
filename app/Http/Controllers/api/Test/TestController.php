@@ -38,4 +38,22 @@ class TestController extends Controller
             'test'    => $test
         ], 201);
     }
+    public function destroy(Request $request, $id)
+{
+    $user = $request->user();
+    $test = $user->tests()->find($id);
+
+    if (!$test) {
+        return response()->json([
+            'message' => 'Test not found',
+        ], 404);
+    }
+
+    $test->delete();
+
+    return response()->json([
+        'message' => 'Test deleted successfully',
+    ], 200);
+}
+
 }

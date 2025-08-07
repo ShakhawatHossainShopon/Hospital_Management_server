@@ -75,6 +75,7 @@ Route::prefix('test')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [TestController::class, 'index']);
         Route::post('/', [TestController::class, 'store']);
+        Route::delete('/{id}', [TestController::class, 'destroy']);
     });
 });
 
