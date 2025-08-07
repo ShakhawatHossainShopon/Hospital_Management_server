@@ -53,5 +53,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(Appointment::class, 'user_id');
     }
+    public function tests()
+    {
+        return $this->hasMany(Test::class, 'user_id');
+    }
+    public function groupes()
+    {
+        return $this->hasMany(Groupe::class, 'user_id');
+    }
     
 }
