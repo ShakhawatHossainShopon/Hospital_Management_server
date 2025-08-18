@@ -61,5 +61,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Groupe::class, 'user_id');
     }
+
+    public function references()
+    {
+        return $this->hasMany(Reference::class, 'user_id');
+    }
+     public function services()
+    {
+        return $this->hasMany(Service::class, 'user_id');
+    }
     
 }

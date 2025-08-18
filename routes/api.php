@@ -5,7 +5,9 @@ use App\Http\Controllers\api\auth\AuthController;
 use App\Http\Controllers\api\doctors\DoctorsController;
 use App\Http\Controllers\api\groupe\GroupeController;
 use App\Http\Controllers\api\patients\PatientController;
+use App\Http\Controllers\api\References\ReferencesController;
 use App\Http\Controllers\api\Scedule\SceduleController;
+use App\Http\Controllers\Api\Services\ServiceController;
 use App\Http\Controllers\api\Test\TestController;
 use Illuminate\Support\Facades\Route;
 
@@ -83,5 +85,25 @@ Route::prefix('groupe')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [GroupeController::class, 'store']);
         Route::get('/', [GroupeController::class, 'index']);
+    });
+});
+
+Route::prefix('references')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/', [ReferencesController::class, 'store']);
+        Route::get('/', [ReferencesController::class, 'index']);
+        Route::get('/{id}', [ReferencesController::class, 'single']);
+        Route::patch('/{id}', [ReferencesController::class, 'update']);
+        Route::delete('/{id}', [ReferencesController::class, 'destroy']);
+    });
+});
+
+Route::prefix('services')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/', [ServiceController::class, 'store']);
+        Route::get('/', [ServiceController::class, 'index']);
+        Route::get('/{id}', [ServiceController::class, 'show']);
+        Route::patch('/{id}', [ServiceController::class, 'update']);
+        Route::delete('/{id}', [ServiceController::class, 'destroy']);
     });
 });
