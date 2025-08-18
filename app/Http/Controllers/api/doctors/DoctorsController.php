@@ -5,7 +5,6 @@ namespace App\Http\Controllers\api\doctors;
 use App\Http\Controllers\Controller;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 class DoctorsController extends Controller
 {
     public function index(Request $request){
@@ -37,29 +36,6 @@ class DoctorsController extends Controller
         $user = $request->user();
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
-        }
-
-        // Validate incoming data
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|string',
-            'firstname' => 'required|string',
-            'lastname' => 'required|string',
-            'bmdc_code' => 'required|string',
-            'gender' => 'required|string',
-            'degree_name' => 'required|string',
-            'consultancy_fee' => 'required|string',
-            'mobile' => 'required|string',
-            'about' => 'string',
-            'email' => 'required|email|unique:doctors,email',
-            'password' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Validation Errors',
-                'errors' => $validator->errors()->all()
-            ], 422);
         }
 
         // Create doctor linked to authenticated user
