@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\api\appoinments\AppoinmentController;
 use App\Http\Controllers\api\auth\AuthController;
+use App\Http\Controllers\api\Bills\BillController;
 use App\Http\Controllers\api\doctors\DoctorsController;
+use App\Http\Controllers\api\employees\EmployeeController;
 use App\Http\Controllers\api\groupe\GroupeController;
 use App\Http\Controllers\api\patients\PatientController;
 use App\Http\Controllers\api\References\ReferencesController;
@@ -105,5 +107,24 @@ Route::prefix('services')->group(function () {
         Route::get('/{id}', [ServiceController::class, 'show']);
         Route::patch('/{id}', [ServiceController::class, 'update']);
         Route::delete('/{id}', [ServiceController::class, 'destroy']);
+    });
+});
+
+Route::prefix('bills')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/', [BillController::class, 'store']);
+        Route::get('/', [BillController::class, 'index']);
+        Route::get('/duebills', [BillController::class, 'Dueindex']);
+        Route::get('/reports', [BillController::class, 'reports']);
+        Route::get('/billData/{patientId}', [BillController::class, 'gatBillData']);
+    });
+});
+
+Route::prefix('employees')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/', [EmployeeController::class, 'store']);
+        Route::get('/', [EmployeeController::class, 'index']);
+        Route::patch('/', [EmployeeController::class, 'update']);
+        Route::delete('/{id}', [EmployeeController::class, 'destroy']);
     });
 });

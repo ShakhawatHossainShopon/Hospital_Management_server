@@ -61,9 +61,18 @@ class ReferencesController extends Controller
         return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        $refs = $user->references;
+        $page = $request->query('page', 1);
 
-        return response()->json(['status' => true,'message'=>'Reference retrive successfuly','ref'=>$refs], 200);
+        $refs = $user->references()->paginate(5, ['*'], 'page', $page);
+    
+        
+        return response()->json(['status' => true,'message'=>'Reference retrive successfuly','ref'=>[
+            'data' => $refs->items(),
+            'current_page' => $refs->currentPage(),
+            'last_page' => $refs->lastPage(),
+            'total' => $refs->total(),
+            'per_page' => $refs->perPage(),
+        ]], 200);
     }
 
 

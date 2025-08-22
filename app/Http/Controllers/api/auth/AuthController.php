@@ -18,6 +18,7 @@ class AuthController extends Controller
                 'name' => 'required',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required',
+                'role' => 'required|in:user,doctor'
             ]
         );
         if ($validate->fails()) {
@@ -31,6 +32,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => $request->password,
+            'role' => $request->role,
         ]);
 
         return response()->json([
@@ -59,7 +61,7 @@ class AuthController extends Controller
 
 
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password,'role' => 'user'])) {
             /** @var \App\Models\User $authUser */
             $authUser = Auth::user();
             $authUser->tokens()->delete();
@@ -70,7 +72,8 @@ class AuthController extends Controller
                 'message' => 'User Logged in Succesfully',
                 'token' => $token,
                 'token_type' => 'bearer',
-                'userid'=> $authUser->id
+                'userid'=> $authUser->id,
+                'role' => $authUser->role
             ], 200);
         } else {
             return response()->json([
