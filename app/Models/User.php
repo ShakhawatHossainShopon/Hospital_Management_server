@@ -66,9 +66,17 @@ class User extends Authenticatable
     {
         return $this->hasMany(Reference::class, 'user_id');
     }
-     public function services()
+    public function services()
     {
         return $this->hasMany(Service::class, 'user_id');
+    }
+    public function bills()
+    {
+        return $this->hasMany(Bill::class, 'user_id');
+    }
+    public function employees()
+    {
+        return $this->hasMany(Employee::class, 'user_id');
     }
     
 }
