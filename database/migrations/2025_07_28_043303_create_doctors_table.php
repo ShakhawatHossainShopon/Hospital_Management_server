@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('job_designation')->nullable();
             $table->string('booking_phone');
             $table->string('gender');
-            $table->string('degree_name');
+            $table->string('degree_name')->nullable();
             $table->string('consultancy_fee');
             $table->string('mobile');
             $table->string('provide_service')->nullable();

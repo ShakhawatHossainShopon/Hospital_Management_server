@@ -92,7 +92,7 @@ class BillController extends Controller
                 $query->whereMonth('created_at', now()->month)
                       ->whereYear('created_at', now()->year);
             }
-        })->paginate(15, ['*'], 'page', $page);
+        })->orderBy('created_at', 'desc')->paginate(15, ['*'], 'page', $page);
 
     return response()->json([
     'message' => 'Bill retrieve successfully',
@@ -126,7 +126,7 @@ class BillController extends Controller
     $totalDueAmount = $query->sum('due_amount');
 
     // Paginate
-    $bills = $query->paginate(15, ['*'], 'page', $page);
+    $bills = $query->latest()->paginate(15, ['*'], 'page', $page);
 
     return response()->json([
         'message'          => 'Due bills retrieved successfully',
@@ -161,7 +161,7 @@ public function reports(Request $request)
         });
 
     // Paginate
-    $paidBills = $query->paginate(15, ['*'], 'page', $page);
+    $paidBills = $query->latest()->paginate(15, ['*'], 'page', $page);
 
     // Counts
     $allBillsCount = $user->bills()->count();
