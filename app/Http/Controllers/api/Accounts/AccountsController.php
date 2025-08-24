@@ -11,20 +11,22 @@ use Illuminate\Http\Request;
 
 class AccountsController extends Controller
 {
-     public function index()
+    public function index(Request $request)
     {
-        // Sum of paid_amount from bills
-        $totalPaidBills = Bill::sum('paid_amount');
+    $userId = $request->user_id;
 
-        // Sum of amount from appointments
-        $totalPaidAppointments = Appointment::sum('amount');
+    // Sum of paid_amount from bills for this user
+    $totalPaidBills = Bill::where('user_id', $userId)->sum('paid_amount');
 
-        return response()->json([
-            'total_paid_bills' => $totalPaidBills,
-            'total_paid_appointments' => $totalPaidAppointments,
-            'grand_total' => $totalPaidBills + $totalPaidAppointments,
-        ]);
-    }
+    // Sum of amount from appointments for this user
+    $totalPaidAppointments = Appointment::where('user_id', $userId)->sum('amount');
+
+            return response()->json([
+                'total_paid_bills' => $totalPaidBills,
+                'total_paid_appointments' => $totalPaidAppointments,
+                'grand_total' => $totalPaidBills + $totalPaidAppointments,
+            ]);
+        }
 
     public function dailyCash(Request $request)
 {
