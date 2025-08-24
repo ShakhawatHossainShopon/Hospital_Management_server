@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\Accounts\AccountsController;
 use App\Http\Controllers\api\appoinments\AppoinmentController;
 use App\Http\Controllers\api\auth\AuthController;
 use App\Http\Controllers\api\Bills\BillController;
@@ -126,5 +127,14 @@ Route::prefix('employees')->group(function () {
         Route::get('/', [EmployeeController::class, 'index']);
         Route::patch('/', [EmployeeController::class, 'update']);
         Route::delete('/{id}', [EmployeeController::class, 'destroy']);
+    });
+});
+
+Route::prefix('accounts')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/', [AccountsController::class, 'index']);
+        Route::get('/dailyCash', [AccountsController::class, 'dailyCash']);
+        Route::post('/addDailyExpense', [AccountsController::class, 'addDailyExpense']);
+        Route::get('/daily-appointments-cash', [AccountsController::class, 'dailyAppointmentCash']);
     });
 });
