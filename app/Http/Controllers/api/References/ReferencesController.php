@@ -63,7 +63,7 @@ class ReferencesController extends Controller
 
         $page = $request->query('page', 1);
 
-        $refs = Reference::where('user_id', $user->admin_id)->paginate(5, ['*'], 'page', $page);
+        $refs = Reference::where('user_id', $user->admin_id)->where('is_booked',1)->paginate(5, ['*'], 'page', $page);
     
         
         return response()->json(['status' => true,'message'=>'Reference retrive successfuly','ref'=>[

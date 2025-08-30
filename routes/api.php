@@ -9,6 +9,7 @@ use App\Http\Controllers\api\employees\EmployeeController;
 use App\Http\Controllers\api\groupe\GroupeController;
 use App\Http\Controllers\api\medicine\medicineController;
 use App\Http\Controllers\api\patients\PatientController;
+use App\Http\Controllers\api\Prescriptions\PrescriptionController;
 use App\Http\Controllers\api\References\ReferencesController;
 use App\Http\Controllers\api\Scedule\SceduleController;
 use App\Http\Controllers\Api\Services\ServiceController;
@@ -172,5 +173,14 @@ Route::prefix('admin/bill')->group(function () {
     });
 });
 
+Route::prefix('prescriptions')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/', [PrescriptionController::class, 'indexSlots']);
+        Route::post('/', [PrescriptionController::class, 'store']);
+        Route::get('/all', [PrescriptionController::class, 'index']);
+        Route::get('/statements', [PrescriptionController::class, 'Getstatements']);
+        Route::get('/cash', [PrescriptionController::class, 'DoctordailyAppointmentCash']);
+    });
+});
 
 

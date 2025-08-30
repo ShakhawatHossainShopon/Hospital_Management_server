@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api\doctors;
 
 use App\Http\Controllers\Controller;
 use App\Models\Doctor;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -54,7 +55,13 @@ class DoctorsController extends Controller
         if($user->role === 'admin'){
              return response()->json(['message' => 'Unauthorized Or admin cannot add Doctors'], 401);
         }
-
+          $user = User::create([
+            'name' => $request->firstname ." ". $request->lastname,
+            'email' => $request->email,
+            'password' => $request->password,
+            'role' => 'doctor',
+            'admin_id'=>$user->admin_id,
+        ]);
         // Create doctor linked to authenticated user
         $doctor = Doctor::create([
             'title' => $request->title,
@@ -77,12 +84,16 @@ class DoctorsController extends Controller
             'starting_pratice' => $request->starting_pratice,
             'achievement' => $request->achievement,
             'user_id' => $user->admin_id,
+            'main_user_id'=> $user->id
         ]);
+        $user->update(['doctor_id' => $doctor->id]);
+      
 
         return response()->json([
             'status' => true,
             'message' => 'Doctor created successfully',
-            'doctor' => $doctor
+            'doctor' => $doctor,
+            'user' => $user
         ], 201);
     }
 
@@ -115,12 +126,21 @@ public function destroy($id){
             'message' => 'Doctor not found'
         ], 404);
     }
+    $user = User::find($doctor->main_user_id);
+    if (!$user) {
+        return response()->json([
+            'status' => false,
+            'message' => 'user not found'
+        ], 404);
+    }
 
     $doctor->delete();
-
+    $user->delete();
     return response()->json([
         'status' => true,
-        'message' => 'Doctor deleted successfully'
+        'message' => 'Doctor deleted successfully',
+        'deleted doctor'=>$doctor,
+        'deleted user'=>$user,
     ], 200);
     }
 

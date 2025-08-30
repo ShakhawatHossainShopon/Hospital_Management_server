@@ -33,6 +33,7 @@ return new class extends Migration
             $table->date('starting_pratice')->nullable();
             $table->string('achievement')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('main_user_id');
             $table->timestamps();
         });
     }
