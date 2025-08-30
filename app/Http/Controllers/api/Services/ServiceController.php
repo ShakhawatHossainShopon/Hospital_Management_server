@@ -12,6 +12,12 @@ class ServiceController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+        $services = Service::where('user_id',$user->admin_id);
+        return response()->json($services, 200);
+    }
+    public function Adminindex(Request $request)
+    {
+        $user = $request->user();
         $services = $user->services;
         return response()->json($services, 200);
     }

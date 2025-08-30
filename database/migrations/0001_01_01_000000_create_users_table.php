@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('role')->default('employee');
+            $table->unsignedBigInteger('admin_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

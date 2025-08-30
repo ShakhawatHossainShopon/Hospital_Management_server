@@ -15,6 +15,17 @@ class PatientController extends Controller
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
+        $patients = Patient::where('user_id',$user->admin_id)->latest()->get();
+        return response()->json(['message' => 'patient retrieve sucessfully',
+        'status'=>true,
+        'patients'=>$patients
+        ], 200);
+    }
+    public function AdminIndex(Request $request){
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
         return response()->json(['message' => 'patient retrieve sucessfully',
         'status'=>true,
         'patients'=>$user->patients
@@ -50,11 +61,11 @@ class PatientController extends Controller
             'birth_date' => 'date',
             'height' => 'string',
             'weight' => 'string',
-            'blood_groupe' => 'string|max:5',
+            'blood_groupe' => 'string',
             'address_line' => 'string',
             'city' => 'string',
             'area' => 'string',
-            'postal_code' => 'string|max:10',
+            'postal_code' => 'string',
         ]);
 
         if ($validator->fails()) {
@@ -66,7 +77,7 @@ class PatientController extends Controller
         }
 
         $data = $validator->validated();
-        $data['user_id'] = $user->id;
+        $data['user_id'] = $user->admin_id;
 
         $patient = Patient::create($data);
 

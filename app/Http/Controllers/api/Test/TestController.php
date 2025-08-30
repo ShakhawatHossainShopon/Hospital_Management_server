@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\api\Test;
 
 use App\Http\Controllers\Controller;
+use App\Models\Test;
 use Illuminate\Http\Request;
 
 class TestController extends Controller
 {
     public function index(Request $request){
-        $test = $request->user()->tests()->with('groupe')->get();
+        $user = $request->user();
+        $test = Test::with('groupe')
+        ->where('user_id', $user->id)
+        ->get();
         if(!$test){
             return response()->json([
             'message'=>'test not found',
@@ -24,13 +28,14 @@ class TestController extends Controller
     {
         $user = $request->user();
 
-        $test = $user->tests()->create([
+        $test = Test::create([
             'item_name'    => $request->item_name,
             'code'         => $request->code,
             'groupe_id'    => $request->groupe_id,
             'unit_price'   => $request->unit_price,
             'max_discound' => $request->max_discound,
             'des'          => $request->des,
+            'user_id'      => $user->id
         ]);
 
         return response()->json([
@@ -38,10 +43,9 @@ class TestController extends Controller
             'test'    => $test
         ], 201);
     }
-    public function destroy(Request $request, $id)
-{
-    $user = $request->user();
-    $test = $user->tests()->find($id);
+    public function destroy($id)
+    {
+    $test = Test::find($id);
 
     if (!$test) {
         return response()->json([

@@ -21,7 +21,8 @@ class GroupeController extends Controller
         ], 201);
     }   
     public function index(Request $request){
-        $groupe = $request->user()->groupes;
+        $user = $request->user();
+        $groupe = Groupe::where('user_id',$user->id)->get();
 
         if(!$groupe){
             return response()->json([

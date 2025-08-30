@@ -18,7 +18,7 @@ class AuthController extends Controller
                 'name' => 'required',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required',
-                'role' => 'required|in:user,doctor'
+                'role' => 'required|in:employee,admin,doctor'
             ]
         );
         if ($validate->fails()) {
@@ -61,7 +61,7 @@ class AuthController extends Controller
 
 
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password,'role' => 'user'])) {
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             /** @var \App\Models\User $authUser */
             $authUser = Auth::user();
             $authUser->tokens()->delete();
@@ -72,14 +72,14 @@ class AuthController extends Controller
                 'message' => 'User Logged in Succesfully',
                 'token' => $token,
                 'token_type' => 'bearer',
-                'userid'=> $authUser->id,
-                'role' => $authUser->role
+                'user_id'=> $authUser->id,
+                'role' => $authUser->role,
+                'admin_id' => $authUser->admin_id
             ], 200);
         } else {
             return response()->json([
                 'status' => false,
                 'message' => 'Email And Password Not Match',
-                'errors' => $validate->errors()->all()
             ], 401);
         };
     }

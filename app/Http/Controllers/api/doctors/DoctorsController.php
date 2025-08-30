@@ -5,6 +5,8 @@ namespace App\Http\Controllers\api\doctors;
 use App\Http\Controllers\Controller;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 class DoctorsController extends Controller
 {
     public function index(Request $request){
@@ -12,9 +14,21 @@ class DoctorsController extends Controller
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
+        $doctors = Doctor::where('user_id',$user->admin_id)->latest()->get();
         return response()->json(['message' => 'doctor retrieve sucessfully',
         'status'=>true,
-        'doctors'=>$user->doctors
+        'doctors'=>$doctors
+        ], 200);
+    }
+    public function adminIndex(Request $request){
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+        $doctors = $user->doctors;
+        return response()->json(['message' => 'doctor retrieve sucessfully',
+        'status'=>true,
+        'doctors'=>$doctors
         ], 200);
     }
     public function singleDoctor(Request $request,$id){
@@ -36,6 +50,9 @@ class DoctorsController extends Controller
         $user = $request->user();
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
+        }
+        if($user->role === 'admin'){
+             return response()->json(['message' => 'Unauthorized Or admin cannot add Doctors'], 401);
         }
 
         // Create doctor linked to authenticated user
@@ -59,7 +76,7 @@ class DoctorsController extends Controller
             'password' => $request->password,
             'starting_pratice' => $request->starting_pratice,
             'achievement' => $request->achievement,
-            'user_id' => $user->id,
+            'user_id' => $user->admin_id,
         ]);
 
         return response()->json([
@@ -112,7 +129,24 @@ public function destroy($id){
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-         $doctors = $user->doctors->map(function ($doctor) {
+        $doctors = DB::table('doctors')
+        ->select('id', DB::raw("CONCAT(firstname, ' ', lastname) as name"))
+        ->where('user_id', $user->admin_id)
+        ->get();
+        return response()->json([
+        'message' => 'doctor retrieve sucessfully',
+        'status'=>true,
+        'doctors' => $doctors,
+        'user_id'=>$user->admin_id,
+        ], 200);
+    }
+
+        public function AdminDoctorsName(Request $request){
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+        $doctors = $user->doctors->map(function ($doctor) {
         return [
             'id' => $doctor->id,
             'name' => $doctor->firstname . ' ' . $doctor->lastname,
@@ -122,7 +156,7 @@ public function destroy($id){
         'message' => 'doctor retrieve sucessfully',
         'status'=>true,
         'doctors' => $doctors,
-        'user_id'=>$user->id
+        'user_id'=>$user->id,
         ], 200);
     }
 

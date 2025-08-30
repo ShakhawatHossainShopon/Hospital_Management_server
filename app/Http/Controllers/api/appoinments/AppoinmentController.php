@@ -18,7 +18,7 @@ class AppoinmentController extends Controller
         ],401);
         }
 
-        $appoinments = Appointment::with('patient','slot')->get();
+        $appoinments = Appointment::with('patient','slot')->where('user_id',$user->admin_id)->get();
         return response()->json([
         'message' => 'Appointment Retrive successfully',
         'appointment' => $appoinments,
@@ -62,11 +62,11 @@ class AppoinmentController extends Controller
         'message' => 'Unothorized',
         ],401);
         }
-        $user_id = $user->id;
+        $user_id = $user->admin_id;
         $patient_id = $request->patient_id;  
         $doctor_id = $request->doctor_id; 
         $slot_id = $request->slot_id;
-        $patient = $user->patients()->where('id', $patient_id)->first();
+        $patient = Patient::where('id', $patient_id)->first();
     if (!$patient) {
     return response()->json(['message' => 'Patient not found'], 404);
     }
@@ -115,7 +115,7 @@ class AppoinmentController extends Controller
         'message' => 'Unothorized',
         ],401);
         }
-        $user_id = $user->id;
+        $user_id = $user->admin_id;
         $patient_phone = $request->mobile_phone;
         $firstname = $request->firstname;
         $lastname = $request->lastname;

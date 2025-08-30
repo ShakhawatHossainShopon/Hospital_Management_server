@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api\Scedule;
 
 use App\Http\Controllers\Controller;
+use App\Models\Doctor;
 use App\Models\Scedule;
 use App\Models\Slot;
 use DateTime;
@@ -12,26 +13,54 @@ class SceduleController extends Controller
 {
     public function index(Request $request){
         $user = $request->user();
+
         if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        return response()->json(['message' => 'Unauthorized'], 401);
         }
-        $doctorIds = $user->doctors->pluck('id');
+
+    // manually fetch doctor IDs without relation
+        $doctorIds = Doctor::where('user_id', $user->admin_id)->pluck('id');
+
         $schedules = Scedule::whereIn('doctor_id', $doctorIds)->get();
-        return response()->json(['message' => 'Scedules retrieve sucessfully',
-        'status'=>true,
-        'scedules'=>$schedules
+
+        return response()->json([
+        'message'   => 'Schedules retrieved successfully',
+        'status'    => true,
+        'schedules' => $schedules
+        ], 200);
+    }
+    public function indexAdmin(Request $request){
+        $user = $request->user();
+
+        if (!$user) {
+        return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+    // manually fetch doctor IDs without relation
+        $doctorIds = Doctor::where('user_id', $user->admin_id)->pluck('id');
+
+        $schedules = Scedule::whereIn('doctor_id', $doctorIds)->get();
+
+        return response()->json([
+        'message'   => 'Schedules retrieved successfully',
+        'status'    => true,
+        'schedules' => $schedules
         ], 200);
     }
 
     public function getDoctorSchedules(Request $request, $doctorId)
 {
-    $user = $request->user();
+     $user = $request->user();
+
     if (!$user) {
         return response()->json(['message' => 'Unauthorized'], 401);
     }
 
-    // Check if this doctor belongs to the authenticated user
-    if (!$user->doctors()->where('id', $doctorId)->exists()) {
+    $doctor = Doctor::where('id', $doctorId)
+        ->where('user_id', $user->admin_id)
+        ->first();
+
+    if (!$doctor) {
         return response()->json(['message' => 'Doctor not found or unauthorized'], 404);
     }
 
@@ -44,15 +73,20 @@ class SceduleController extends Controller
     ], 200);
     }
 
-    public function getDoctorDaySchedules(Request $request, $doctorId, $day)
+public function getDoctorDaySchedules(Request $request, $doctorId, $day)
 {
     $user = $request->user();
+
     if (!$user) {
         return response()->json(['message' => 'Unauthorized'], 401);
     }
 
     // Check if the doctor belongs to this user
-    if (!$user->doctors()->where('id', $doctorId)->exists()) {
+    $doctor = Doctor::where('id', $doctorId)
+        ->where('user_id', $user->admin_id)
+        ->first();
+
+    if (!$doctor) {
         return response()->json(['message' => 'Doctor not found or unauthorized'], 404);
     }
 
@@ -63,15 +97,16 @@ class SceduleController extends Controller
 
     // Fetch schedules for that doctor and day
     $schedules = Scedule::where('doctor_id', $doctorId)
-                        ->where('day', $day)
-                        ->get();
+        ->where('day', $day)
+        ->get();
 
     return response()->json([
-        'message' => 'Schedules retrieved successfully',
-        'status' => true,
+        'message'   => 'Schedules retrieved successfully',
+        'status'    => true,
         'schedules' => $schedules,
     ], 200);
 }
+
  public function store(Request $request)
     {
         $user = $request->user();
@@ -82,7 +117,7 @@ class SceduleController extends Controller
             'capacity' => $request->capacity,
             'duration' => $request->duration,
             'doctor_id' => $request->doctor_id,
-            'user_id' => $user->id
+            'user_id' => $user->admin_id
         ]);
          $slots = $this->generateSlots($request->startTime, $request->capacity, $request->duration);
         foreach ($slots as $time) {
@@ -90,7 +125,7 @@ class SceduleController extends Controller
                 'time' => $time,
                 'scedule_id' => $schedule->id,
                 'time_indicator' => $request->time_indicator,
-                'user_id' => $user->id
+                'user_id' => $user->admin_id
             ]);
         }
 
@@ -115,12 +150,29 @@ class SceduleController extends Controller
 
 public function getSlotsByDay(Request $request)
 {
+    $user = $request->user();
+
+    if (!$user) {
+        return response()->json(['message' => 'Unauthorized'], 401);
+    }
+
     $doctorId = $request->doctor_id;
     $day = $request->day; // 0=Sunday, 6=Saturday
-    $doctor = $request->user()->doctors()
-    ->select('firstname', 'lastname', 'title', 'degree_name', 'speciality', 'bmdc_code')
-    ->where('id', $doctorId)
-    ->first();
+
+    // Check doctor belongs to this user
+    $doctor = Doctor::where('id', $doctorId)
+        ->where('user_id', $user->admin_id)
+        ->select('firstname', 'lastname', 'title', 'degree_name', 'speciality', 'bmdc_code')
+        ->first();
+
+    if (!$doctor) {
+        return response()->json([
+            'status'  => false,
+            'message' => 'Doctor not found or unauthorized'
+        ], 404);
+    }
+
+    // Get schedule with slots
     $schedule = Scedule::with('slots')
         ->where('doctor_id', $doctorId)
         ->where('day', $day)
@@ -128,17 +180,18 @@ public function getSlotsByDay(Request $request)
 
     if (!$schedule) {
         return response()->json([
-            'status' => false,
+            'status'  => false,
             'message' => 'No schedule found for this doctor and day'
         ], 404);
     }
 
     return response()->json([
-        'status' => true,
-        'slots' => $schedule->slots,
-        'doctor'=>$doctor
-    ]);
+        'status'  => true,
+        'slots'   => $schedule->slots,
+        'doctor'  => $doctor
+    ], 200);
 }
+
 public function destroySlot(Request $request){
     $user = $request->user();
         if (!$user) {

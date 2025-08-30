@@ -21,7 +21,7 @@ class ReferencesController extends Controller
             'phone' => $request->phone,
             'address'=> $request->address,
             'remarks'=> $request->remarks,
-            'user_id'=> $user->id
+            'user_id'=> $user->admin_id
         ]);
 
         return response()->json(['status' => true,'message'=>'Reference created successfuly','ref'=>$ref], 201);
@@ -63,7 +63,7 @@ class ReferencesController extends Controller
 
         $page = $request->query('page', 1);
 
-        $refs = $user->references()->paginate(5, ['*'], 'page', $page);
+        $refs = Reference::where('user_id', $user->admin_id)->paginate(5, ['*'], 'page', $page);
     
         
         return response()->json(['status' => true,'message'=>'Reference retrive successfuly','ref'=>[
